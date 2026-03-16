@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Distant Archive — Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@300;400&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c10;
+    --surface: #0d1318;
+    --surface2: #121920;
+    --border: rgba(150,180,200,0.08);
+    --border-glow: rgba(120,180,220,0.2);
+    --text: #c8d8e4;
+    --text-dim: #6a8090;
+    --text-faint: #3a5060;
+    --accent: #7ab8d4;
+    --accent2: #4a8aaa;
+    --gold: #c8a96e;
+    --gold-dim: #7a6040;
+    --danger: #c46a6a;
+    --success: #6aaa88;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Star field background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(200,220,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 40%, rgba(200,220,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 10%, rgba(200,220,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 65%, rgba(200,220,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 30%, rgba(200,220,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 85% 80%, rgba(200,220,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 92% 20%, rgba(200,220,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 15% 75%, rgba(200,220,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 90%, rgba(200,220,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 45% 55%, rgba(200,220,255,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 78% 50%, rgba(200,220,255,0.3) 0%, transparent 100%),
+      radial-gradient(2px 2px at 33% 85%, rgba(200,220,255,0.15) 0%, transparent 100%),
+      radial-gradient(2px 2px at 66% 5%, rgba(200,220,255,0.15) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 40vh;
+    background: radial-gradient(ellipse at 50% 100%, rgba(30,60,90,0.3) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+
+  .header-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .header-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 6vw, 56px);
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .header-title span {
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  .header-sub {
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    font-family: 'Cinzel', serif;
+    font-weight: 300;
+  }
+
+  .divider {
+    width: 120px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-glow), transparent);
+    margin: 24px auto;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 4px;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 10px;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.3s;
+  }
+
+  .tab.active {
+    background: var(--surface2);
+    color: var(--accent);
+    border: 1px solid var(--border-glow);
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 28px;
+    margin-bottom: 20px;
+    transition: border-color 0.3s;
+  }
+
+  .card:hover { border-color: var(--border-glow); }
+
+  .card-label {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  /* Script Library */
+  .script-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  .script-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .script-header:hover { background: var(--surface2); }
+
+  .script-topic {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--text);
+  }
+
+  .script-type-badge {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    padding: 3px 8px;
+    border-radius: 2px;
+    border: 1px solid var(--border-glow);
+    color: var(--accent);
+  }
+
+  .script-body {
+    display: none;
+    padding: 0 20px 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .script-body.open { display: block; }
+
+  .script-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    line-height: 2;
+    color: var(--text-dim);
+    font-style: italic;
+    white-space: pre-wrap;
+    padding: 20px 0;
+  }
+
+  .script-text strong {
+    color: var(--gold);
+    font-style: normal;
+    font-weight: 400;
+  }
+
+  .script-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  /* Narrator Tool */
+  .form-row { margin-bottom: 20px; }
+
+  label {
+    display: block;
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    padding: 12px 14px;
+    outline: none;
+    transition: border-color 0.3s;
+    appearance: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--border-glow);
+  }
+
+  input[type="password"] {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+  }
+
+  textarea {
+    min-height: 240px;
+    resize: vertical;
+    line-height: 1.8;
+  }
+
+  select option { background: var(--surface2); }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: all 0.3s;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: var(--bg);
+  }
+
+  .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border-glow);
+    color: var(--accent);
+    padding: 8px 16px;
+    font-size: 9px;
+  }
+
+  .btn-ghost:hover { background: rgba(120,180,220,0.08); }
+
+  .btn-gold {
+    background: transparent;
+    border: 1px solid var(--gold-dim);
+    color: var(--gold);
+    padding: 8px 16px;
+    font-size: 9px;
+  }
+
+  .btn-gold:hover { background: rgba(200,169,110,0.08); }
+
+  /* Progress */
+  .progress-area {
+    display: none;
+    margin-top: 24px;
+  }
+
+  .progress-area.visible { display: block; }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.1em;
+  }
+
+  .progress-bar-track {
+    height: 2px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .log {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    max-height: 160px;
+    overflow-y: auto;
+    font-family: 'Inter', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.8;
+  }
+
+  .log-entry { opacity: 0; animation: fadeIn 0.3s forwards; }
+  .log-entry.ok { color: var(--success); }
+  .log-entry.err { color: var(--danger); }
+  .log-entry.info { color: var(--accent); }
+
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  /* Download */
+  .download-area {
+    display: none;
+    margin-top: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(106,170,136,0.05), rgba(122,184,212,0.05));
+    border: 1px solid rgba(106,170,136,0.2);
+    border-radius: 6px;
+    text-align: center;
+  }
+
+  .download-area.visible { display: block; }
+
+  .download-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    color: var(--success);
+    margin-bottom: 8px;
+  }
+
+  .download-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+
+  /* Stats row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .stat-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    color: var(--accent);
+    display: block;
+  }
+
+  .stat-label {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    margin-top: 4px;
+    display: block;
+  }
+
+  /* Chevron */
+  .chevron {
+    width: 16px;
+    height: 16px;
+    color: var(--text-faint);
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+
+  .chevron.open { transform: rotate(180deg); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--surface); }
+  ::-webkit-scrollbar-thumb { background: var(--border-glow); border-radius: 2px; }
+
+  @media (max-width: 600px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .tabs { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PASSWORD SCREEN -->
+<div id="lock-screen" style="display:none; position:fixed; inset:0; background:var(--bg); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:24px;">
+  <div style="text-align:center; margin-bottom:8px;">
+    <div style="font-family:'Cinzel',serif; font-size:10px; letter-spacing:0.35em; color:var(--text-faint); margin-bottom:16px;">CONTENT STUDIO</div>
+    <div style="font-family:'Cormorant Garamond',serif; font-size:42px; font-weight:300; color:var(--text); letter-spacing:0.05em;">The Distant <span style="color:var(--accent); font-style:italic;">Archive</span></div>
+    <div style="width:120px; height:1px; background:linear-gradient(90deg,transparent,var(--border-glow),transparent); margin:20px auto;"></div>
+    <div style="font-family:'Cinzel',serif; font-size:9px; letter-spacing:0.3em; color:var(--text-faint);">ENTER PASSWORD TO CONTINUE</div>
+  </div>
+  <div style="width:100%; max-width:320px; display:flex; flex-direction:column; gap:12px; padding:0 24px;">
+    <input type="password" id="lock-input" placeholder="Password" onkeydown="if(event.key==='Enter')checkPassword()" style="text-align:center; letter-spacing:0.2em; font-family:'Cinzel',serif; font-size:13px;">
+    <button class="btn btn-primary" onclick="checkPassword()" style="justify-content:center;">
+      Open the Archive
+    </button>
+    <div id="lock-error" style="text-align:center; font-size:11px; color:var(--danger); display:none; font-family:'Cinzel',serif; letter-spacing:0.1em;">Incorrect password</div>
+  </div>
+</div>
+
+<div id="main-content" style="display:none;">
+<div class="container">
+
+  <div class="header">
+    <div class="header-eyebrow">Content Studio</div>
+    <h1 class="header-title">The Distant <span>Archive</span></h1>
+    <div class="divider"></div>
+    <div class="header-sub">Script Library & Narration Engine</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('narrator')">Narration Engine</button>
+    <button class="tab" onclick="switchTab('scripts')">Script Library</button>
+    <button class="tab" onclick="switchTab('settings')">API Settings</button>
+  </div>
+
+  <!-- NARRATOR TAB -->
+  <div class="tab-panel active" id="tab-narrator">
+
+    <div class="card">
+      <div class="card-label">Script Input</div>
+
+      <div id="stats-row" class="stats-row" style="display:none">
+        <div class="stat-box">
+          <span class="stat-value" id="stat-chars">0</span>
+          <span class="stat-label">Characters</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-value" id="stat-chunks">0</span>
+          <span class="stat-label">Chunks</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-value" id="stat-mins">~0</span>
+          <span class="stat-label">Est. Minutes</span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Script — paste, <span onclick="document.getElementById('script-file').click()" style="color:var(--accent); cursor:pointer; text-decoration:underline;">click to upload</span>, or drag &amp; drop a .txt file</label>
+        <input type="file" id="script-file" accept=".txt" style="display:none" onchange="loadScriptFile(this)">
+        <div id="drop-zone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" style="position:relative;">
+          <textarea id="script-input" placeholder="Paste your script here, drag and drop a .txt file, or click 'click to upload' above…" oninput="updateStats()" style="width:100%;"></textarea>
+          <div id="drop-overlay" style="display:none; position:absolute; inset:0; background:rgba(122,184,212,0.08); border:2px dashed var(--accent); border-radius:4px; align-items:center; justify-content:center; font-family:'Cinzel',serif; font-size:11px; letter-spacing:0.2em; color:var(--accent); pointer-events:none;">DROP TO LOAD</div>
+        </div>
+        <div id="upload-status" style="font-size:11px; color:var(--success); margin-top:6px; display:none;"></div>
+      </div>
+
+      <div class="form-row">
+        <label>Voice</label>
+        <select id="voice-select">
+          <option value="">— Loading voices... —</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label>Stability <span id="stability-val" style="color:var(--accent)">0.75</span></label>
+        <input type="range" min="0" max="1" step="0.05" value="0.75" id="stability" style="padding:4px 0; cursor:pointer" oninput="document.getElementById('stability-val').textContent=this.value">
+      </div>
+
+      <div class="form-row">
+        <label>Similarity Boost <span id="similarity-val" style="color:var(--accent)">0.75</span></label>
+        <input type="range" min="0" max="1" step="0.05" value="0.75" id="similarity" style="padding:4px 0; cursor:pointer" oninput="document.getElementById('similarity-val').textContent=this.value">
+      </div>
+
+      <div class="form-row">
+        <label>Speed <span id="speed-val" style="color:var(--accent)">0.85</span> <span style="font-size:10px; color:var(--text-faint)">— 0.7 slowest · 1.0 normal · 1.2 fastest</span></label>
+        <input type="range" min="0.7" max="1.2" step="0.05" value="0.85" id="speed" style="padding:4px 0; cursor:pointer" oninput="document.getElementById('speed-val').textContent=parseFloat(this.value).toFixed(2)">
+      </div>
+
+      <button class="btn btn-primary" id="narrate-btn" onclick="startNarration()" style="width:100%; justify-content:center">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        Begin Narration
+      </button>
+    </div>
+
+    <div class="progress-area" id="progress-area">
+      <div class="progress-label">
+        <span id="progress-status">Initialising...</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+      <div class="log" id="log"></div>
+    </div>
+
+    <div class="download-area" id="download-area">
+      <div class="download-title">The record is complete.</div>
+      <div class="download-sub" id="download-sub"></div>
+      <button class="btn btn-primary" id="download-btn" onclick="downloadAudio()" style="margin: 0 auto; display:inline-flex">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        Download MP3
+      </button>
+    </div>
+
+  </div>
+
+  <!-- SCRIPTS TAB -->
+  <div class="tab-panel" id="tab-scripts">
+
+    <div id="scripts-container"></div>
+
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div class="tab-panel" id="tab-settings">
+    <div class="card">
+      <div class="card-label">ElevenLabs API Key</div>
+      <div class="form-row">
+        <label>Your API Key (stored in browser only)</label>
+        <input type="password" id="api-key-input" placeholder="sk-..." oninput="saveApiKey()">
+      </div>
+      <p style="font-size:12px; color:var(--text-faint); line-height:1.7">
+        Your key is stored only in your browser's local storage and is sent directly to ElevenLabs. It never passes through any other server. Find your key at elevenlabs.io → Profile → API Keys.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Custom Voice</div>
+      <div class="form-row">
+        <label>Your Custom Voice ID</label>
+        <input type="text" id="custom-voice-id" placeholder="e.g. abc123xyz..." oninput="saveCustomVoice()" style="font-family:'Inter',sans-serif;font-size:13px">
+      </div>
+      <p style="font-size:12px; color:var(--text-faint); line-height:1.7; margin-bottom:12px">
+        Paste your custom voice ID here and it will appear at the top of the voice list in the Narrator. Find it at elevenlabs.io → Voices → your voice → copy the ID shown beneath the name.
+      </p>
+      <div class="form-row">
+        <label>Custom Voice Display Name</label>
+        <input type="text" id="custom-voice-name" placeholder="e.g. My Archive Voice" oninput="saveCustomVoice()" style="font-family:'Inter',sans-serif;font-size:13px">
+      </div>
+      <button class="btn btn-ghost" onclick="applyCustomVoice()" style="margin-top:4px">Apply & Set as Default</button>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Model</div>
+      <div class="form-row">
+        <label>TTS Model</label>
+        <select id="model-select" onchange="saveModel()">
+          <option value="eleven_multilingual_v2">Multilingual v2 — Highest Quality (~500 min/500k credits)</option>
+          <option value="eleven_turbo_v2_5">Turbo v2.5 — Fast (~1000 min/500k credits)</option>
+          <option value="eleven_flash_v2_5">Flash v2.5 — Fastest</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+
+const SCRIPTS = [
+  {
+    topic: "Black Holes — The Quiet Gravity of the Unknown",
+    category: "Universe",
+    template: "The Drift",
+    intro: `Welcome to the Distant Archive.
+
+Tonight's entry:
+Black Holes — The Quiet Gravity of the Unknown.
+
+Tonight, we drift far beyond familiar skies…
+into regions of space where light itself can no longer return.
+
+We will move slowly along the edges of collapsed stars,
+trace the silent pull of invisible giants,
+and follow the boundaries where time begins to bend and fade.
+
+In these distant depths, entire worlds may pass unnoticed,
+drawn gently toward forces older than our solar system itself.
+
+Here, even darkness has structure…
+and the universe keeps its most patient secrets.
+
+There is nothing to solve.
+Nowhere you need to be.
+
+The archive opens.
+
+Our record begins at the death of a massive star…`,
+
+    outro: `And so the record closes.
+
+Tonight we traveled through the quiet gravity of black holes —
+through collapsed stars and event horizons,
+through the places where even light surrenders.
+
+We moved slowly. We asked quiet questions.
+We let the darkness pass over us like something ancient and unhurried.
+
+Perhaps you found something here worth keeping.
+Perhaps you simply rested.
+Both are enough.
+
+The universe continues its patient work without our help tonight.
+Somewhere out there, a star is dying
+and becoming something stranger, and more silent, than before.
+
+This entry is complete.
+
+The Distant Archive will be here when you return.
+
+Sleep well.`
+  },
+  {
+    topic: "The Egyptian Empire — Sand, Stone, and Eternity",
+    category: "History",
+    template: "The Descent",
+    intro: `Welcome to the Distant Archive.
+
+Tonight's entry:
+The Egyptian Empire — Sand, Stone, and Eternity.
+
+We descend now into the ancient Nile valley…
+where a civilisation built monuments to outlast time itself.
+
+There were people here once.
+They built things. They believed things.
+They looked at the same stars you are looking at now —
+and called them gods.
+
+We will walk quietly along the banks of the great river,
+through the shadow of temples carved from living stone,
+and among the quiet chambers of kings who dreamed of forever.
+
+For three thousand years, this world endured.
+It did not ask to be remembered.
+It simply refused to disappear.
+
+There is nothing to solve.
+Nowhere you need to be.
+
+The archive opens.
+
+Our record begins beside the river, before the first stone was laid…`,
+
+    outro: `And so the record closes.
+
+Tonight we traveled through the Egyptian Empire —
+through the long green corridor of the Nile,
+through temples, tombs, and the careful silence of sand.
+
+We moved slowly. We asked quiet questions.
+We let three thousand years pass over us like something vast and unhurried.
+
+Perhaps you found something here worth keeping.
+Perhaps you simply rested.
+Both are enough.
+
+History holds its shape while you sleep.
+The stones are still standing.
+The river is still moving.
+
+This entry is complete.
+
+The Distant Archive will be here when you return.
+
+Sleep well.`
+  },
+  {
+    topic: "Sleep & Dreams — The Architecture of the Night Mind",
+    category: "Psychology",
+    template: "The Turn Inward",
+    intro: `Welcome to the Distant Archive.
+
+Tonight's entry:
+Sleep & Dreams — The Architecture of the Night Mind.
+
+Tonight we do not travel outward…
+We turn inward.
+
+Into the sleeping mind —
+the part of you that has always known how to let go,
+even when the waking hours made it difficult.
+
+We will trace the slow descent through consciousness,
+sit with the strange geography of dreams,
+and follow the mind into the quiet place
+where memory softens and the body remembers how to rest.
+
+You have done this before.
+You will do it again tonight.
+
+There is nothing to solve.
+Nowhere you need to be.
+
+The archive opens.
+
+Our record begins at the threshold —
+the moment between waking and not…`,
+
+    outro: `And so the record closes.
+
+Tonight we traveled through sleep and dreams —
+through the architecture of the night mind,
+through the soft collapse of waking thought
+into something older and more patient.
+
+We moved slowly. We asked quiet questions.
+We let the mind settle, as it always does, into something softer.
+
+Perhaps you found something here worth keeping.
+Perhaps you simply drifted.
+Both are enough.
+
+The mind continues its quiet work now.
+There is nothing left to hold.
+
+This entry is complete.
+
+The Distant Archive will be here when you return.
+
+Sleep well.`
+  },
+  {
+    topic: "Ancient Rome — The Rise, The Empire, and The Long Fall",
+    category: "History",
+    template: "The Descent",
+    intro: `Welcome to the Distant Archive.
+
+Tonight's entry:
+Ancient Rome — The Rise, The Empire, and The Long Fall.
+
+We descend now into the ancient world…
+into a city that began as seven muddy hills beside a river
+and became the most powerful force the Western world had ever seen.
+
+There were people here once.
+They built things. They conquered things.
+They drew lines across the map of the known world
+and called everything inside those lines
+Rome.
+
+We will follow the arc of an empire —
+from its first kings, through centuries of republic and war,
+to the moment a single man crossed a river with his army
+and changed everything.
+
+We will walk through the height of Roman power —
+through campaigns that stretched from Britain to Persia,
+through the politics of men who wanted to live forever
+and the knives of men who wanted something else.
+
+And we will be there at the end…
+when the borders began to bend,
+when the legions thinned,
+when the city that had outlasted everything
+finally grew too heavy to hold itself up.
+
+Empires do not fall in a day.
+They fall the way a person falls asleep —
+gradually, and then all at once.
+
+There is nothing to solve.
+Nowhere you need to be.
+
+The archive opens.
+
+Our record begins on seven hills, before the first king was crowned…`,
+
+    outro: `And so the record closes.
+
+Tonight we traveled through the full arc of Rome —
+through its hungry beginnings,
+its centuries of war and expansion,
+and its long, slow, inevitable unraveling.
+
+We moved slowly. We asked quiet questions.
+We let a thousand years collapse into something quiet and still.
+
+Perhaps you found something here worth keeping.
+Perhaps you simply rested.
+Both are enough.
+
+Empires end.
+But the roads remain.
+And somewhere beneath the modern city,
+the old stones are still there —
+patient, and indifferent, and permanent.
+
+History holds its shape while you sleep.
+
+This entry is complete.
+
+The Distant Archive will be here when you return.
+
+Sleep well.`
+  },
+  {
+    topic: "The Subconscious Mind — What Lives Beneath the Surface",
+    category: "Psychology",
+    template: "The Turn Inward",
+    intro: `Welcome to the Distant Archive.
+
+Tonight's entry:
+The Subconscious Mind — What Lives Beneath the Surface.
+
+Tonight we do not travel outward…
+We turn inward.
+
+Into the subconscious —
+the vast and mostly silent region of mind
+that shapes nearly everything you do
+without ever asking your permission.
+
+We will trace the patterns laid down in childhood,
+sit with the instincts older than language,
+and follow the quiet signals
+that move beneath thought like water beneath ice.
+
+Most of what you are
+has never been spoken aloud.
+It does not need to be.
+
+You have carried it this far.
+It has carried you further.
+
+There is nothing to solve.
+Nowhere you need to be.
+
+The archive opens.
+
+Our record begins in the deep —
+below memory, below intention,
+in the place where the self was first assembled…`,
+
+    outro: `And so the record closes.
+
+Tonight we traveled through the subconscious mind —
+through its patterns and its silences,
+through the parts of you that work without instruction
+and rest without permission.
+
+We moved slowly. We asked quiet questions.
+We let the deeper mind do what it has always done —
+process, sort, and slowly, quietly, release.
+
+Perhaps you found something here worth keeping.
+Perhaps you simply let something go.
+Both are enough.
+
+The mind continues its work in the dark.
+It does not need you to stay awake for it.
+
+This entry is complete.
+
+The Distant Archive will be here when you return.
+
+Sleep well.`
+  }
+];
+
+// ─── STATE ──────────────────────────────────────────────────────────────────
+
+let audioChunks = [];
+let finalBlob = null;
+const CHUNK_SIZE = 4500;
+
+// ─── INIT ───────────────────────────────────────────────────────────────────
+
+function saveApiKey() {
+  localStorage.setItem('da_api_key', document.getElementById('api-key-input').value);
+}
+
+function saveModel() {
+  localStorage.setItem('da_model', document.getElementById('model-select').value);
+}
+
+function saveCustomVoice() {
+  localStorage.setItem('da_custom_voice_id', document.getElementById('custom-voice-id').value.trim());
+  localStorage.setItem('da_custom_voice_name', document.getElementById('custom-voice-name').value.trim());
+}
+
+function applyCustomVoice() {
+  const id = document.getElementById('custom-voice-id').value.trim();
+  const name = document.getElementById('custom-voice-name').value.trim() || 'My Custom Voice';
+  if (!id) { alert('Please paste your Voice ID first.'); return; }
+
+  saveCustomVoice();
+
+  const sel = document.getElementById('voice-select');
+  // Remove existing custom option if present
+  const existing = sel.querySelector('[data-custom="true"]');
+  if (existing) existing.remove();
+
+  // Insert at top
+  const opt = document.createElement('option');
+  opt.value = id;
+  opt.textContent = '★ ' + name + ' (Your Voice)';
+  opt.setAttribute('data-custom', 'true');
+  sel.insertBefore(opt, sel.firstChild);
+  sel.value = id;
+
+  const btn = event.target;
+  btn.textContent = 'Applied ✓';
+  setTimeout(() => btn.textContent = 'Apply & Set as Default', 1800);
+}
+
+function getApiKey() {
+  return document.getElementById('api-key-input').value.trim() ||
+         localStorage.getItem('da_api_key') || '';
+}
+
+// ─── TABS ───────────────────────────────────────────────────────────────────
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', ['narrator','scripts','settings'][i] === name);
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ─── VOICES ─────────────────────────────────────────────────────────────────
+
+async function loadVoices() {
+  const key = getApiKey();
+  const sel = document.getElementById('voice-select');
+
+  const defaults = [
+    { voice_id: 'EXAVITQu4vr4xnSDxMaL', name: 'Sarah — Calm, Female' },
+    { voice_id: 'TX3LPaxmHKxFdv7VOQHJ', name: 'Liam — Warm, Male' },
+    { voice_id: 'pFZP5JQG7iQjIQuC4Bku', name: 'Lily — Soft, Female' },
+    { voice_id: 'onwK4e9ZLuTAKqWW03F9', name: 'Daniel — Deep, Male' },
+    { voice_id: 'ThT5KcBeYPX3keUQqHPh', name: 'Dorothy — Gentle, Female' },
+  ];
+
+  sel.innerHTML = '';
+
+  // Inject custom voice at top if saved, otherwise use default Archive Voice
+  const customId = localStorage.getItem('da_custom_voice_id') || 'PIGsltMj3gFMR34aFDI3';
+  const customName = localStorage.getItem('da_custom_voice_name') || 'Archive Voice';
+  if (customId) {
+    const opt = document.createElement('option');
+    opt.value = customId;
+    opt.textContent = '★ ' + customName + ' (Your Voice)';
+    opt.setAttribute('data-custom', 'true');
+    sel.appendChild(opt);
+    sel.value = customId;
+  }
+
+  defaults.forEach(v => {
+    const o = document.createElement('option');
+    o.value = v.voice_id;
+    o.textContent = v.name;
+    sel.appendChild(o);
+  });
+
+  if (!key) return;
+
+  try {
+    const res = await fetch('https://api.elevenlabs.io/v1/voices', {
+      headers: { 'xi-api-key': key }
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    // Keep custom voice at top, replace rest
+    const customOpt = sel.querySelector('[data-custom="true"]');
+    sel.innerHTML = '<option value="">— Select a voice —</option>';
+    if (customOpt) {
+      sel.insertBefore(customOpt, sel.firstChild);
+      sel.value = customOpt.value;
+    }
+    data.voices.sort((a,b) => a.name.localeCompare(b.name)).forEach(v => {
+      const o = document.createElement('option');
+      o.value = v.voice_id;
+      o.textContent = v.name;
+      sel.appendChild(o);
+    });
+    // Re-select custom if set
+    if (customId) sel.value = customId;
+  } catch(e) {
+    // keep defaults
+  }
+}
+
+// ─── STATS ──────────────────────────────────────────────────────────────────
+
+function handleDragOver(e) {
+  e.preventDefault();
+  const overlay = document.getElementById('drop-overlay');
+  overlay.style.display = 'flex';
+}
+
+function handleDragLeave(e) {
+  document.getElementById('drop-overlay').style.display = 'none';
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-overlay').style.display = 'none';
+  const file = e.dataTransfer.files[0];
+  if (!file || !file.name.endsWith('.txt')) {
+    alert('Please drop a .txt file.');
+    return;
+  }
+  readFile(file);
+}
+
+function loadScriptFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  readFile(file);
+  input.value = '';
+}
+
+function readFile(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('script-input').value = e.target.result;
+    updateStats();
+    const status = document.getElementById('upload-status');
+    status.style.display = 'block';
+    status.textContent = '✓ ' + file.name + ' loaded — ' + e.target.result.length.toLocaleString() + ' characters';
+    setTimeout(() => status.style.display = 'none', 4000);
+  };
+  reader.readAsText(file);
+}
+
+function updateStats() {
+  const text = document.getElementById('script-input').value;
+  if (!text.trim()) {
+    document.getElementById('stats-row').style.display = 'none';
+    return;
+  }
+  document.getElementById('stats-row').style.display = 'grid';
+  const chars = text.length;
+  const chunks = splitText(text).length;
+  const mins = Math.round((chars / 1000) * 1.3);
+  document.getElementById('stat-chars').textContent = chars.toLocaleString();
+  document.getElementById('stat-chunks').textContent = chunks;
+  document.getElementById('stat-mins').textContent = '~' + mins;
+}
+
+// ─── SPLIT ──────────────────────────────────────────────────────────────────
+
+function splitText(text) {
+  const sentences = text.match(/[^.!?…\n]+[.!?…\n]*/g) || [text];
+  const chunks = [];
+  let current = '';
+  for (const s of sentences) {
+    if ((current + s).length > CHUNK_SIZE && current.length > 0) {
+      chunks.push(current.trim());
+      current = s;
+    } else {
+      current += s;
+    }
+  }
+  if (current.trim()) chunks.push(current.trim());
+  return chunks;
+}
+
+// ─── NARRATION ──────────────────────────────────────────────────────────────
+
+async function startNarration() {
+  const key = getApiKey();
+  if (!key) {
+    alert('Please add your ElevenLabs API key in the Settings tab first.');
+    switchTab('settings');
+    return;
+  }
+
+  const text = document.getElementById('script-input').value.trim();
+  if (!text) { alert('Please paste a script first.'); return; }
+
+  const voiceId = document.getElementById('voice-select').value;
+  if (!voiceId) { alert('Please select a voice.'); return; }
+
+  const model = document.getElementById('model-select').value || 'eleven_multilingual_v2';
+  const stability = parseFloat(document.getElementById('stability').value);
+  const similarity = parseFloat(document.getElementById('similarity').value);
+  const speed = parseFloat(document.getElementById('speed').value);
+
+  const chunks = splitText(text);
+
+  // UI reset
+  audioChunks = [];
+  finalBlob = null;
+  document.getElementById('progress-area').classList.add('visible');
+  document.getElementById('download-area').classList.remove('visible');
+  document.getElementById('log').innerHTML = '';
+  document.getElementById('narrate-btn').disabled = true;
+  setProgress(0, `Preparing ${chunks.length} segments...`);
+  addLog(`Archive opened — ${chunks.length} segments, ${text.length.toLocaleString()} characters`, 'info');
+
+  let success = 0;
+
+  for (let i = 0; i < chunks.length; i++) {
+    const pct = Math.round((i / chunks.length) * 100);
+    setProgress(pct, `Narrating segment ${i+1} of ${chunks.length}…`);
+    addLog(`Segment ${i+1}/${chunks.length} — ${chunks[i].length} chars`);
+
+    try {
+      const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'xi-api-key': key
+        },
+        body: JSON.stringify({
+          text: chunks[i],
+          model_id: model,
+          voice_settings: { stability, similarity_boost: similarity, speed }
+        })
+      });
+
+      if (!res.ok) {
+        const err = await res.text();
+        addLog(`Segment ${i+1} failed: ${res.status}`, 'err');
+        if (res.status === 401) { addLog('Invalid API key — check Settings', 'err'); break; }
+        continue;
+      }
+
+      const buf = await res.arrayBuffer();
+      audioChunks.push(buf);
+      success++;
+      addLog(`Segment ${i+1} complete ✓`, 'ok');
+    } catch(e) {
+      addLog(`Segment ${i+1} error: ${e.message}`, 'err');
+    }
+  }
+
+  setProgress(100, 'Assembling final audio…');
+  addLog(`Stitching ${success} segments into final file…`, 'info');
+
+  if (audioChunks.length > 0) {
+    finalBlob = new Blob(audioChunks, { type: 'audio/mpeg' });
+    const mb = (finalBlob.size / 1024 / 1024).toFixed(1);
+    document.getElementById('download-area').classList.add('visible');
+    document.getElementById('download-sub').textContent =
+      `${success} of ${chunks.length} segments complete — ${mb} MB`;
+    addLog(`Record complete — ${mb} MB ready for download`, 'ok');
+    setProgress(100, 'Complete');
+  } else {
+    addLog('No audio generated — please check your API key and try again.', 'err');
+  }
+
+  document.getElementById('narrate-btn').disabled = false;
+}
+
+function setProgress(pct, label) {
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-status').textContent = label;
+  document.getElementById('progress-pct').textContent = pct + '%';
+}
+
+function addLog(msg, type = '') {
+  const log = document.getElementById('log');
+  const el = document.createElement('div');
+  el.className = 'log-entry ' + type;
+  el.textContent = '› ' + msg;
+  log.appendChild(el);
+  log.scrollTop = log.scrollHeight;
+}
+
+function downloadAudio() {
+  if (!finalBlob) return;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(finalBlob);
+  a.download = 'distant-archive-narration.mp3';
+  a.click();
+}
+
+// ─── SCRIPTS ────────────────────────────────────────────────────────────────
+
+function renderScripts() {
+  const container = document.getElementById('scripts-container');
+  container.innerHTML = '';
+
+  SCRIPTS.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'script-card';
+    div.innerHTML = `
+      <div class="script-header" onclick="toggleScript(${i})">
+        <div>
+          <div style="font-family:'Cinzel',serif;font-size:8px;letter-spacing:0.2em;color:var(--text-faint);margin-bottom:4px">${s.category} — ${s.template}</div>
+          <div class="script-topic">${s.topic}</div>
+        </div>
+        <svg class="chevron" id="chevron-${i}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="script-body" id="body-${i}">
+        <div style="display:flex;gap:8px;padding:16px 0 4px">
+          <button class="btn btn-ghost" onclick="showSection(${i},'intro')">Intro</button>
+          <button class="btn btn-ghost" onclick="showSection(${i},'outro')">Outro</button>
+          <button class="btn btn-gold" onclick="loadFull(${i})">Load Full into Narrator</button>
+        </div>
+        <div id="section-${i}-intro" class="script-text">${escHtml(s.intro)}</div>
+        <div id="section-${i}-outro" class="script-text" style="display:none">${escHtml(s.outro)}</div>
+        <div class="script-actions">
+          <button class="btn btn-ghost" onclick="copySection(${i},'intro')">Copy Intro</button>
+          <button class="btn btn-ghost" onclick="copySection(${i},'outro')">Copy Outro</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function toggleScript(i) {
+  const body = document.getElementById('body-' + i);
+  const chevron = document.getElementById('chevron-' + i);
+  const open = body.classList.toggle('open');
+  chevron.classList.toggle('open', open);
+}
+
+function showSection(i, section) {
+  document.getElementById(`section-${i}-intro`).style.display = section === 'intro' ? 'block' : 'none';
+  document.getElementById(`section-${i}-outro`).style.display = section === 'outro' ? 'block' : 'none';
+}
+
+function copySection(i, section) {
+  const text = SCRIPTS[i][section];
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+
+function loadFull(i) {
+  const s = SCRIPTS[i];
+  const full = s.intro + '\n\n[YOUR MAIN CONTENT HERE]\n\n' + s.outro;
+  document.getElementById('script-input').value = full;
+  updateStats();
+  switchTab('narrator');
+}
+
+function escHtml(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+// ─── PASSWORD ────────────────────────────────────────────────────────────────
+
+const PASSWORD = 'archivebeyondstories42';
+
+function checkPassword() {
+  const input = document.getElementById('lock-input').value;
+  if (input === PASSWORD) {
+    localStorage.setItem('da_unlocked', '1');
+    document.getElementById('lock-screen').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+    loadVoices();
+    renderScripts();
+  } else {
+    document.getElementById('lock-error').style.display = 'block';
+    document.getElementById('lock-input').value = '';
+    document.getElementById('lock-input').focus();
+  }
+}
+
+window.onload = () => {
+  const unlocked = localStorage.getItem('da_unlocked');
+  if (unlocked === '1') {
+    document.getElementById('lock-screen').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+  } else {
+    document.getElementById('lock-screen').style.display = 'flex';
+    document.getElementById('main-content').style.display = 'none';
+    setTimeout(() => document.getElementById('lock-input').focus(), 100);
+    return;
+  }
+  const saved = localStorage.getItem('da_api_key');
+  if (saved) document.getElementById('api-key-input').value = saved;
+  const savedModel = localStorage.getItem('da_model');
+  if (savedModel) document.getElementById('model-select').value = savedModel;
+  const savedVoiceId = localStorage.getItem('da_custom_voice_id');
+  if (savedVoiceId) document.getElementById('custom-voice-id').value = savedVoiceId;
+  const savedVoiceName = localStorage.getItem('da_custom_voice_name');
+  if (savedVoiceName) document.getElementById('custom-voice-name').value = savedVoiceName;
+  loadVoices();
+  renderScripts();
+};
+</script>
+</div>
+</body>
+</html>
